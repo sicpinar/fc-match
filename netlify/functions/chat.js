@@ -1,31 +1,60 @@
 // Chat pro Match persistieren
 import { getStore } from '@netlify/blobs'
-const chatStore = getStore({ name: 'chat', consistency: 'strong' })
 
-export async function handler(event){
-  const method = event.httpMethod
-
-  if (method === 'GET'){
-    const { matchId } = event.queryStringParameters || {}
-    if (!matchId) return json(400, { error:'matchId required' })
-    const msgs=[]
-    for await (const k of chatStore.list({ prefix: `${matchId}_` })){
-      const m = await chatStore.getJSON(k.key)
-      if (m) msgs.push(m)
+export async function handler(event, context) {
+  const store = getStore({ name: 'messages', consistency: 'strong' })
+  
+  if (event.httpMethod === 'GET') {
+    try {
+      const { matchId } = event.queryStringParameters || {}
+      const messages = []
+      const { blobs } = await store.list({ prefix: matchId })
+      
+      for (const blob of blobs) {
+        const data = await store.get(blob.key)
+        if (data) messages.push(JSON.parse(data))
+      }
+      
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(messages)
+      }
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message })
+      }
     }
-    msgs.sort((a,b)=> new Date(a.at)-new Date(b.at))
-    return json(200, msgs)
   }
-
-  if (method === 'POST'){
-    const { matchId, from, text } = JSON.parse(event.body || '{}')
-    if (!matchId || !text) return json(400, { error:'matchId & text required' })
-    const id = `${matchId}_${Date.now()}_${Math.random().toString(36).slice(2,5)}`
-    const msg = { id, matchId, from: from || 'unknown', text, at: new Date().toISOString() }
-    await chatStore.setJSON(id, msg)
-    return json(201, msg)
+  
+  if (event.httpMethod === 'POST') {
+    try {
+      const { matchId, message, senderId } = JSON.parse(event.body)
+      const messageId = `${matchId}_msg_${Date.now()}`
+      
+      const msg = {
+        id: messageId,
+        matchId,
+        message,
+        senderId,
+        createdAt: new Date().toISOString()
+      }
+      
+      await store.set(messageId, JSON.stringify(msg))
+      
+      return {
+        statusCode: 201,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(msg)
+      }
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message })
+      }
+    }
   }
-
-  return json(405, 'Method not allowed')
+  
+  return { statusCode: 405, body: 'Method not allowed' }
 }
-const json=(s,d)=>({statusCode:s,headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
