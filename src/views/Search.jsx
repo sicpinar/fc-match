@@ -1,7 +1,35 @@
 import { useState } from 'react'
 import GameCard from '../components/GameCard'
 import { searchGames, createLike } from '../lib/api'
+import { getMyTeam } from '../lib/api'
 import { MapPin } from 'lucide-react'
+
+export default function Search() {
+  // ... dein bisheriger State
+
+  async function handleSearch() {
+    setLoading(true)
+    try {
+      const results = await searchGames(filters)
+      setGames(results)
+      setCurrentIndex(0)
+    } catch (e) { console.error(e) } finally { setLoading(false) }
+  }
+
+  async function handleLike(gameId) {
+    try {
+      const me = await getMyTeam()
+      const opponentId = games[currentIndex]?.teamId
+      await createLike(gameId, me?.id, opponentId)
+      if (currentIndex < games.length - 1) setCurrentIndex(currentIndex + 1)
+      else setGames([])
+    } catch (e) { console.error(e) }
+  }
+
+  function handleSkip() {
+    if (currentIndex < games.length - 1) setCurrentIndex(currentIndex + 1)
+    else setGames([])
+  }
 
 export default function Search() {
   const [games, setGames] = useState([])
