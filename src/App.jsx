@@ -8,7 +8,8 @@ import Chats from './views/Chats'
 import Profile from './views/Profile'
 import Impressum from './views/Impressum'
 import Datenschutz from './views/Datenschutz'
-import { checkAuth } from './lib/auth'
+import { checkAuth } from './lib/api'
+
 
 function App() {
   const [user, setUser] = useState(null)
