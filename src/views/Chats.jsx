@@ -1,0 +1,1 @@
+export default function Chats(){return (<div className='p-4'><h2 className='text-xl font-bold mb-2'>Chats</h2><p>Diese Seite wird bald implementiert.</p></div>)}

@@ -1,0 +1,1 @@
+export const sampleTeams = []; export const sampleGames = [];
