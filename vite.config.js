@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Projekt A: Basis Vite-Konfiguration
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -13,9 +14,12 @@ export default defineConfig({
       }
     }
   },
+  // EXT-HOOK: Build-Optimierungen für Projekt B-D
   build: {
     rollupOptions: {
-      output: { manualChunks: undefined }
+      output: {
+        manualChunks: undefined
+      }
     }
   }
 })
