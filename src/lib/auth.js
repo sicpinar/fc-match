@@ -1,30 +1,44 @@
-// src/lib/auth.js
-
-// Minimal-Auth fürs MVP: zeigt die App ohne echtes Backend an.
-// Später ersetzen wir das durch die echte Magic-Link-Logik.
-
 export async function checkAuth() {
-  // Falls ein Magic-Link-Token in der URL steht, speichern wir einen "Login"
-  if (typeof window !== 'undefined') {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    if (token) {
-      const user = { id: 'magic-link', email: 'trainer@example.com', token };
-      localStorage.setItem('fc_user', JSON.stringify(user));
-      // URL aufräumen (ohne ?token)
-      window.history.replaceState({}, '', window.location.pathname);
+  try {
+    // Check cookie or localStorage
+    const token = localStorage.getItem('fc_match_token')
+    if (!token) return null
+    
+    // Decode token
+    const decoded = JSON.parse(atob(token))
+    if (decoded.exp < Date.now()) {
+      localStorage.removeItem('fc_match_token')
+      return null
     }
-    // Bereits gespeicherten Nutzer zurückgeben (oder Demo-User)
-    const raw = localStorage.getItem('fc_user');
-    if (raw) return JSON.parse(raw);
+    
+    return decoded
+  } catch {
+    return null
   }
-
-  // Demo-User, damit Suche/Navigation sichtbar ist
-  return { id: 'demo-user', email: 'demo@example.com' };
 }
 
-export function logout() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('fc_user');
-  }
+export async function sendMagicLink(email, userData) {
+  const response = await fetch('/api/auth-magic-link', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, userData })
+  })
+  
+  if (!response.ok) throw new Error('Failed to send magic link')
+  return response.json()
+}
+
+export async function verifyMagicLink(token) {
+  const response = await fetch('/api/auth-verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
+  })
+  
+  if (!response.ok) throw new Error('Invalid token')
+  const data = await response.json()
+  
+  // Store token locally
+  localStorage.setItem('fc_match_token', token)
+  return data.user
 }
