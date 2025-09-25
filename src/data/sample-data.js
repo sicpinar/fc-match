@@ -1,1 +1,225 @@
-export const sampleTeams = []; export const sampleGames = [];
+// Projekt A: Beispieldaten für Entwicklung
+
+export const sampleTeams = [
+  {
+    id: 'team_001',
+    dfbNumber: '1234567',
+    clubName: 'FC Fortuna Düsseldorf',
+    teamName: 'U12 1. Mannschaft',
+    ageGroup: 'U12',
+    plz: '40476',
+    verificationLevel: 'gold',
+    rating: 4.5,
+    ratingCount: 12,
+    trainerName: 'Thomas Müller',
+    email: 'trainer@fortuna-duesseldorf.de'
+  },
+  {
+    id: 'team_002',
+    dfbNumber: '2345678',
+    clubName: 'SV Wersten 04',
+    teamName: 'U10',
+    ageGroup: 'U10',
+    plz: '40591',
+    verificationLevel: 'silver',
+    rating: 4.2,
+    ratingCount: 8,
+    trainerName: 'Klaus Schmidt',
+    email: 'klaus@sv-wersten.de'
+  },
+  {
+    id: 'team_003',
+    dfbNumber: '3456789',
+    clubName: 'TSV Eller',
+    teamName: 'Herren 2. Mannschaft',
+    ageGroup: 'Herren',
+    plz: '40229',
+    verificationLevel: 'bronze',
+    rating: null,
+    ratingCount: 0,
+    trainerName: 'Frank Weber',
+    email: 'frank@tsv-eller.de'
+  },
+  {
+    id: 'team_004',
+    dfbNumber: '4567890',
+    clubName: 'FC Benrath',
+    teamName: 'U15',
+    ageGroup: 'U15',
+    plz: '40597',
+    verificationLevel: 'gold',
+    rating: 4.8,
+    ratingCount: 15,
+    trainerName: 'Michael Becker',
+    email: 'coach@fc-benrath.de'
+  },
+  {
+    id: 'team_005',
+    dfbNumber: '5678901',
+    clubName: 'Sportfreunde Gerresheim',
+    teamName: 'Alte Herren',
+    ageGroup: 'Alte Herren',
+    plz: '40625',
+    verificationLevel: 'silver',
+    rating: 3.9,
+    ratingCount: 5,
+    trainerName: 'Jürgen Meyer',
+    email: 'juergen@sf-gerresheim.de'
+  }
+]
+
+export const sampleGames = [
+  {
+    id: 'game_001',
+    teamId: 'team_001',
+    teamName: 'FC Fortuna Düsseldorf U12',
+    date: '2025-10-15',
+    time: '14:00',
+    location: 'Sportplatz Düsseldorf-Nord',
+    plz: '40476',
+    ageGroup: 'U12',
+    allowedAgeGroups: ['U11', 'U12', 'U13'],
+    homeAway: 'Heimspiel',
+    surface: 'Kunstrasen',
+    hasReferee: true,
+    comment: 'Suchen starken Gegner für Testspiel',
+    verificationLevel: 'gold',
+    rating: 4.5,
+    status: 'open'
+  },
+  {
+    id: 'game_002',
+    teamId: 'team_002',
+    teamName: 'SV Wersten 04 U10',
+    date: '2025-10-20',
+    time: '10:00',
+    location: 'Sportanlage Wersten',
+    plz: '40591',
+    ageGroup: 'U10',
+    allowedAgeGroups: ['U9', 'U10', 'U11'],
+    homeAway: 'Heimspiel',
+    surface: 'Rasen',
+    hasReferee: false,
+    comment: 'Freundschaftsspiel, gerne mit anschließendem Grillen',
+    verificationLevel: 'silver',
+    rating: 4.2,
+    status: 'open'
+  },
+  {
+    id: 'game_003',
+    teamId: 'team_003',
+    teamName: 'TSV Eller Herren 2',
+    date: '2025-10-22',
+    time: '19:30',
+    location: 'Bezirkssportanlage Eller',
+    plz: '40229',
+    ageGroup: 'Herren',
+    allowedAgeGroups: ['Herren', 'U19'],
+    homeAway: 'Heimspiel',
+    surface: 'Kunstrasen',
+    hasReferee: true,
+    comment: 'Flutlichtspiel möglich',
+    verificationLevel: 'bronze',
+    rating: null,
+    status: 'open'
+  },
+  {
+    id: 'game_004',
+    teamId: 'team_004',
+    teamName: 'FC Benrath U15',
+    date: '2025-10-25',
+    time: '15:00',
+    location: 'Sportplatz Benrath',
+    plz: '40597',
+    ageGroup: 'U15',
+    allowedAgeGroups: ['U14', 'U15', 'U16'],
+    homeAway: 'Auswärtsspiel',
+    surface: 'Rasen',
+    hasReferee: false,
+    comment: 'Fahren auch gerne weiter weg (bis 50km)',
+    verificationLevel: 'gold',
+    rating: 4.8,
+    status: 'open'
+  },
+  {
+    id: 'game_005',
+    teamId: 'team_001',
+    teamName: 'FC Fortuna Düsseldorf U12',
+    date: '2025-11-01',
+    time: '13:00',
+    location: 'Sportplatz Düsseldorf-Nord',
+    plz: '40476',
+    ageGroup: 'U12',
+    allowedAgeGroups: ['U12'],
+    homeAway: 'Heimspiel',
+    surface: 'Kunstrasen',
+    hasReferee: true,
+    comment: 'Turniervorbereitung - nur gleiche Altersklasse',
+    verificationLevel: 'gold',
+    rating: 4.5,
+    status: 'open'
+  },
+  {
+    id: 'game_006',
+    teamId: 'team_005',
+    teamName: 'Sportfreunde Gerresheim AH',
+    date: '2025-10-18',
+    time: '16:00',
+    location: 'Sportplatz Gerresheim',
+    plz: '40625',
+    ageGroup: 'Alte Herren',
+    allowedAgeGroups: ['Alte Herren', 'Herren'],
+    homeAway: 'Heimspiel',
+    surface: 'Rasen',
+    hasReferee: false,
+    comment: 'Gemütliches Spiel mit 3. Halbzeit',
+    verificationLevel: 'silver',
+    rating: 3.9,
+    status: 'open'
+  },
+  {
+    id: 'game_007',
+    teamId: 'team_002',
+    teamName: 'SV Wersten 04 U10',
+    date: '2025-11-05',
+    time: '14:30',
+    location: 'Auswärts flexibel',
+    plz: '40591',
+    ageGroup: 'U10',
+    allowedAgeGroups: ['U10', 'U11'],
+    homeAway: 'Auswärtsspiel',
+    surface: 'Egal',
+    hasReferee: false,
+    comment: 'Suchen Spiel im Umkreis von 30km',
+    verificationLevel: 'silver',
+    rating: 4.2,
+    status: 'open'
+  },
+  {
+    id: 'game_008',
+    teamId: 'team_004',
+    teamName: 'FC Benrath U15',
+    date: '2025-10-30',
+    time: '18:00',
+    location: 'Sportplatz Benrath',
+    plz: '40597',
+    ageGroup: 'U15',
+    allowedAgeGroups: ['U15', 'U16', 'U17'],
+    homeAway: 'Heimspiel',
+    surface: 'Kunstrasen',
+    hasReferee: true,
+    comment: 'Abendspiel unter Flutlicht',
+    verificationLevel: 'gold',
+    rating: 4.8,
+    status: 'open'
+  }
+]
+
+// Projekt B: Spielerdaten (später)
+// export const samplePlayers = []
+
+// Projekt C: Premium-Features (später)
+// export const premiumPackages = []
+
+// Projekt D: Analytics-Events (später)
+// export const analyticsEvents = []
