@@ -1,26 +1,52 @@
+// FILE: src/views/Verify.jsx
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { verifyMagicLink } from '../lib/api';
+
+function extractToken() {
+  const { search, hash, pathname } = window.location;
+
+  // 1) Klassisch: /verify?token=...
+  const q1 = new URLSearchParams(search).get('token');
+  if (q1) return q1;
+
+  // 2) HashRouter: #/verify?token=...
+  if (hash && hash.includes('?')) {
+    const q2 = new URLSearchParams(hash.split('?')[1]).get('token');
+    if (q2) return q2;
+  }
+
+  // 3) Pure Hash: #token=...
+  if (hash && hash.startsWith('#token=')) {
+    return decodeURIComponent(hash.slice(7));
+  }
+
+  // 4) Pfad-Variante: /verify/:t  (funktioniert auch mit HashRouter)
+  const parts = (hash || pathname).split('/');
+  const i = parts.findIndex(p => p === 'verify');
+  if (i >= 0 && parts[i + 1]) return decodeURIComponent(parts[i + 1]);
+
+  return null;
+}
 
 export default function Verify() {
   const { t: tokenInPath } = useParams();
   const [msg, setMsg] = useState('Prüfe deinen Login-Link ...');
 
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const token =
-      url.searchParams.get('token') ||
-      (url.hash.startsWith('#token=') ? url.hash.slice(7) : null) ||
-      tokenInPath || null;
+    const token = tokenInPath || extractToken();
 
-    if (!token) { setMsg('Kein Token gefunden.'); return; }
+    if (!token) {
+      setMsg('Kein Token gefunden.');
+      return;
+    }
 
     (async () => {
       try {
         const res = await verifyMagicLink(token);
         localStorage.setItem('fc_user', JSON.stringify(res.user));
 
-        // HARTE WEITERLEITUNG, damit App.jsx den User neu einliest
+        // Harte Weiterleitung, damit App.jsx den User neu lädt
         const base = location.hash.startsWith('#/') ? '/#' : '';
         window.location.replace(`${base}/search`);
       } catch (e) {
