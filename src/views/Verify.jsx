@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { verifyMagicLink } from '../lib/api';
 
 export default function Verify() {
   const { t: tokenInPath } = useParams();
-  const nav = useNavigate();
   const [msg, setMsg] = useState('Prüfe deinen Login-Link ...');
 
   useEffect(() => {
@@ -14,23 +13,22 @@ export default function Verify() {
       (url.hash.startsWith('#token=') ? url.hash.slice(7) : null) ||
       tokenInPath || null;
 
-    if (!token) {
-      setMsg('Kein Token gefunden.');
-      return;
-    }
+    if (!token) { setMsg('Kein Token gefunden.'); return; }
 
     (async () => {
       try {
         const res = await verifyMagicLink(token);
         localStorage.setItem('fc_user', JSON.stringify(res.user));
-        setMsg('Erfolgreich! Weiterleitung ...');
-        setTimeout(() => nav('/search'), 600);
+
+        // HARTE WEITERLEITUNG, damit App.jsx den User neu einliest
+        const base = location.hash.startsWith('#/') ? '/#' : '';
+        window.location.replace(`${base}/search`);
       } catch (e) {
         console.error('verify failed:', e);
         setMsg('Link ungültig oder abgelaufen.');
       }
     })();
-  }, [nav, tokenInPath]);
+  }, [tokenInPath]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
