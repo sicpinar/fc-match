@@ -1,3 +1,4 @@
+import Verify from './views/Verify'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Layout from './components/Layout'
@@ -37,6 +38,7 @@ function App() {
         <Route path="profile" element={user ? <Profile user={user} /> : <Navigate to="/" />} />
         <Route path="impressum" element={<Impressum />} />
         <Route path="datenschutz" element={<Datenschutz />} />
+        <Route path="verify" element={<Verify />} />
       </Route>
     </Routes>
   )
