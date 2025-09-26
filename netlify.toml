@@ -1,27 +1,38 @@
+# FILE: netlify.toml
+
 [build]
-  command = "npm run build"
+  command   = "npm run build"
+  publish   = "dist"
   functions = "netlify/functions"
-  publish = "dist"
+
+# Netlify-Asset-Optimierung ausschalten (verhindert MIME-Fehler)
+[build.processing]
+  skip_processing = true
 
 [build.environment]
   NODE_VERSION = "18"
 
+# Optional: Lokale Netlify-Dev-Einstellungen
+[dev]
+  command = "npm run dev"
+  port    = 5173
+
 # API → Functions
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to   = "/.netlify/functions/:splat"
   status = 200
 
-# Assets explizit erlauben (WICHTIG!)
+# Assets explizit erlauben (vor dem Catch-All!)
 [[redirects]]
   from = "/assets/*"
-  to = "/assets/:splat"
+  to   = "/assets/:splat"
   status = 200
 
-# SPA Catch-All (MUSS zuletzt kommen)
+# SPA Catch-All (muss zuletzt kommen)
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
 
 [functions]
