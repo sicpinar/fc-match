@@ -6,7 +6,7 @@ import { verifyMagicLink } from '../lib/api';
 function extractToken() {
   const { search, hash, pathname } = window.location;
 
-  // 1) Klassisch: /verify?token=...
+  // 1) /verify?token=...
   const q1 = new URLSearchParams(search).get('token');
   if (q1) return q1;
 
@@ -21,9 +21,9 @@ function extractToken() {
     return decodeURIComponent(hash.slice(7));
   }
 
-  // 4) Pfad-Variante: /verify/:t  (funktioniert auch mit HashRouter)
+  // 4) Pfad-Variante: (Hash) /#/verify/<token>  oder (BrowserRouter) /verify/<token>
   const parts = (hash || pathname).split('/');
-  const i = parts.findIndex(p => p === 'verify');
+  const i = parts.findIndex((p) => p === 'verify');
   if (i >= 0 && parts[i + 1]) return decodeURIComponent(parts[i + 1]);
 
   return null;
@@ -44,11 +44,12 @@ export default function Verify() {
     (async () => {
       try {
         const res = await verifyMagicLink(token);
+        // User persistent speichern
         localStorage.setItem('fc_user', JSON.stringify(res.user));
 
-        // Harte Weiterleitung, damit App.jsx den User neu lädt
-        const base = location.hash.startsWith('#/') ? '/#' : '';
-        window.location.replace(`${base}/search`);
+        // HARTE Weiterleitung, damit App.jsx den User neu einliest
+        const useHash = location.hash.startsWith('#/');
+        window.location.replace(useHash ? '/#/search' : '/search');
       } catch (e) {
         console.error('verify failed:', e);
         setMsg('Link ungültig oder abgelaufen.');
