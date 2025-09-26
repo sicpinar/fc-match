@@ -39,6 +39,7 @@ function App() {
         <Route path="impressum" element={<Impressum />} />
         <Route path="datenschutz" element={<Datenschutz />} />
         <Route path="verify" element={<Verify />} />
+        <Route path="verify/:t" element={<Verify />} />
       </Route>
     </Routes>
   )
