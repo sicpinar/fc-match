@@ -6,18 +6,19 @@
 [build.environment]
   NODE_VERSION = "18"
 
-[dev]
-  command = "npm run dev"
-  port = 5173
-  targetPort = 5173
-  publish = "dist"
-  autoLaunch = false
-
+# API → Functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Assets explizit erlauben (WICHTIG!)
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# SPA Catch-All (MUSS zuletzt kommen)
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -26,18 +27,3 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@netlify/blobs"]
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=UTF-8"
-
-[[headers]]
-  for = "/*.mjs"
-  [headers.values]
-    Content-Type = "application/javascript; charset=UTF-8"
