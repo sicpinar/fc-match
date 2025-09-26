@@ -1,36 +1,51 @@
-// Projekt A: Magic Link Authentication
-import jwt from 'jsonwebtoken'
+// FILE: netlify/functions/auth-magic-link.js
+import jwt from "jsonwebtoken";
 
-export async function handler(event, context) {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method not allowed' }
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method not allowed" };
   }
-  
+
   try {
-    const { email, userData } = JSON.parse(event.body)
-    
-    // Einfacher Token für MVP (ohne externe Dependencies)
-    const token = Buffer.from(JSON.stringify({ 
-      email, 
-      ...userData,
-      exp: Date.now() + 900000 // 15 Minuten
-    })).toString('base64')
-    
-    const magicLink = `${process.env.SITE_URL || 'http://localhost:5173'}/verify?token=${token}`
-    
-    console.log(`Magic Link für ${email}: ${magicLink}`)
-    
-    return {
-      statusCode: 200,
+    const { email, userData } = JSON.parse(event.body || "{}");
+    if (!email) return { statusCode: 400, body: "Missing email" };
+
+    // Signiertes JWT (15 Minuten gültig)
+    const token = jwt.sign(
+      { email, ...userData },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const verifyUrl = `${process.env.SITE_URL}/verify?token=${encodeURIComponent(token)}`;
+
+    // Resend API: E-Mail versenden
+    const resp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: 'Magic Link gesendet' })
+      body: JSON.stringify({
+        from: process.env.EMAIL_FROM, // z. B. noreply@deine-domain.de (bei Resend verifiziert)
+        to: [email],
+        subject: "Dein FC Match Login-Link",
+        html: `
+          <p>Hi! Klicke zum Login:</p>
+          <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+          <p>Gültig für 15 Minuten.</p>
+        `,
+      }),
+    });
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      return { statusCode: 500, body: `Resend error: ${txt}` };
     }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    }
+
+    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+  } catch (e) {
+    return { statusCode: 500, body: e.message };
   }
 }
+
