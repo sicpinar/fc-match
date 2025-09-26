@@ -17,7 +17,7 @@ export async function handler(event) {
       { expiresIn: "15m" }
     );
     
-const verifyUrl = `${process.env.SITE_URL}/verify#token=${encodeURIComponent(token)}`;
+    const verifyUrl = `${process.env.SITE_URL}/#/verify?token=${encodeURIComponent(token)}`;
 
     // Resend API: E-Mail versenden
     const resp = await fetch("https://api.resend.com/emails", {
