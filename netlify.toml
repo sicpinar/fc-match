@@ -28,6 +28,17 @@
   from = "/assets/*"
   to   = "/assets/:splat"
   status = 200
+  
+# Root-Hashes -> /assets/... umbiegen (falls index-XYZ.js o.ä. referenziert wird)
+[[redirects]]
+  from = "/:name-:hash.js"
+  to   = "/assets/:name-:hash.js"
+  status = 200
+
+[[redirects]]
+  from = "/:name-:hash.css"
+  to   = "/assets/:name-:hash.css"
+  status = 200
 
 # SPA Catch-All (muss zuletzt kommen)
 [[redirects]]
